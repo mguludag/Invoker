@@ -48,9 +48,7 @@ struct Invoker{
 //  fix this later
 //  && std::is_constructible<std::function<Invocable>, 
 //     std::reference_wrapper<typename std::remove_reference<I>::type>>::value
-
-        static_assert(std::is_convertible<I, Invocable_T>::value, 
-        "'Invoker<Invocable>::invocable_' has incomplete type!");
+        static_assert(std::is_convertible<I, Invocable_T>::value, "'Invoker<Invocable>::invocable_' has incomplete type!");
 #endif // INVOKER_CPLUSPLUS <= 201703L
     }
     
@@ -103,7 +101,7 @@ private:
 
 #if INVOKER_CPLUSPLUS > 201402L
 template <typename I>
-Invoker(I) -> Invoker<I>;
+Invoker(I) -> Invoker<std::conditional_t<std::is_pointer_v<I>, std::remove_pointer_t<I>, I>>;
 #endif // INVOKER_CPLUSPLUS > 201402L
 #endif // INVOKER_CPLUSPLUS > 201103L
 
