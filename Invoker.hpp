@@ -23,8 +23,7 @@
 template <typename Invocable>
 struct Invoker{
 #if INVOKER_CPLUSPLUS > 201402L
-    using Invocable_T = std::conditional_t<std::is_function_v<Invocable>, 
-                        std::add_pointer_t<Invocable>, Invocable>;
+    using Invocable_T = std::conditional_t<std::is_function_v<Invocable>, std::add_pointer_t<Invocable>, Invocable>;
     
     template <typename F, typename... Args>
     using is_invocable = std::is_invocable<F, Args...>;   
@@ -33,10 +32,8 @@ struct Invoker{
                         typename std::add_pointer<Invocable>::type, Invocable>::type;
 
     template <typename F, typename... Args>
-    struct is_invocable :
-    std::is_constructible<std::function<void(Args ...)>, 
-    std::reference_wrapper<typename std::remove_reference<F>::type>>
-    {};
+    struct is_invocable : std::is_constructible<std::function<void(Args ...)>, 
+    std::reference_wrapper<typename std::remove_reference<F>::type>> {};
 #endif
     template <typename I>
 #if INVOKER_CPLUSPLUS > 201703L
@@ -56,15 +53,15 @@ struct Invoker{
 #if INVOKER_CPLUSPLUS > 201703L
     requires std::invocable<Invocable&, Args...>
 #endif // INVOKER_CPLUSPLUS > 201703L
+    inline auto operator()(Args&&... args)
 #if INVOKER_CPLUSPLUS > 201103L
-    inline decltype(auto) operator()(Args&&... args)
+    -> decltype(auto)
 #else
-    inline auto operator()(Args&&... args) -> typename std::result_of<Invocable_T(Args&&...)>::type 
+    -> typename std::result_of<Invocable_T(Args&&...)>::type 
 #endif // INVOKER_CPLUSPLUS > 201103L
     {
 #if INVOKER_CPLUSPLUS <= 201703L
-        static_assert(is_invocable<Invocable_T, Args...>::value, 
-        "Argument constraints not satisfied!");
+        static_assert(is_invocable<Invocable_T, Args...>::value, "Argument constraints not satisfied!");
 #endif // INVOKER_CPLUSPLUS <= 201703L
 #if INVOKER_CPLUSPLUS > 201402L
         return std::invoke(invocable_, std::forward<Args>(args)...);
@@ -74,19 +71,19 @@ struct Invoker{
     }
     
     
-        template <typename... Args>
+    template <typename... Args>
 #if INVOKER_CPLUSPLUS > 201703L
     requires std::invocable<Invocable&, Args...>
 #endif // INVOKER_CPLUSPLUS > 201703L
+    inline auto operator()(Args&&... args) const
 #if INVOKER_CPLUSPLUS > 201103L
-    inline decltype(auto) operator()(Args&&... args) const
+    -> decltype(auto)
 #else
-    inline auto operator()(Args&&... args) const -> typename std::result_of<Invocable_T(Args&&...)>::type 
+    -> typename std::result_of<Invocable_T(Args&&...)>::type 
 #endif // INVOKER_CPLUSPLUS > 201103L
     {
 #if INVOKER_CPLUSPLUS <= 201703L
-        static_assert(is_invocable<Invocable_T, Args...>::value, 
-        "Argument constraints not satisfied!");
+        static_assert(is_invocable<Invocable_T, Args...>::value, "Argument constraints not satisfied!");
 #endif // INVOKER_CPLUSPLUS <= 201703L
 #if INVOKER_CPLUSPLUS > 201402L
         return std::invoke(invocable_, std::forward<Args>(args)...);
@@ -100,8 +97,8 @@ private:
 };
 
 #if INVOKER_CPLUSPLUS > 201402L
-template <typename I>
-Invoker(I) -> Invoker<std::conditional_t<std::is_pointer_v<I>, std::remove_pointer_t<I>, I>>;
+    template <typename I>
+    Invoker(I) -> Invoker<std::conditional_t<std::is_pointer_v<I>, std::remove_pointer_t<I>, I>>;
 #endif // INVOKER_CPLUSPLUS > 201402L
 #endif // INVOKER_CPLUSPLUS > 201103L
 
