@@ -45,9 +45,11 @@ struct Invoker{
     Invoker(I invocable) : invocable_(std::move(invocable))
     {
 #if INVOKER_CPLUSPLUS <= 201703L
-        static_assert(std::is_convertible<I, Invocable_T>::value && 
-        std::is_constructible<std::function<Invocable>, 
-        std::reference_wrapper<typename std::remove_reference<I>::type>>::value, 
+//  fix this later
+//  && std::is_constructible<std::function<Invocable>, 
+//     std::reference_wrapper<typename std::remove_reference<I>::type>>::value
+
+        static_assert(std::is_convertible<I, Invocable_T>::value, 
         "'Invoker<Invocable>::invocable_' has incomplete type!");
 #endif // INVOKER_CPLUSPLUS <= 201703L
     }
