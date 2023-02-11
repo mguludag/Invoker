@@ -104,7 +104,7 @@ private:
 template <typename I>
 auto makeInvoker(I&& f) -> Invoker<std::conditional_t<std::is_pointer_v<I>, std::remove_pointer_t<I>, I>>
 {
-    return Invoker<std::conditional_t<std::is_pointer_v<I>, std::remove_pointer_t<I>, I>>{f};
+    return Invoker<std::conditional_t<std::is_pointer_v<I>, std::remove_pointer_t<I>, I>>{std::forward<I>(f)};
 }
 
 #endif // INVOKER_CPLUSPLUS > 201103L
