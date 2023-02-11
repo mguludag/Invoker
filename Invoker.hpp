@@ -100,6 +100,13 @@ private:
     template <typename I>
     Invoker(I) -> Invoker<std::conditional_t<std::is_pointer_v<I>, std::remove_pointer_t<I>, I>>;
 #endif // INVOKER_CPLUSPLUS > 201402L
+
+template <typename I>
+Invoker<I> makeInvoker(I&& f) -> Invoker<std::conditional_t<std::is_pointer_v<I>, std::remove_pointer_t<I>, I>>
+{
+    return Invoker<std::conditional_t<std::is_pointer_v<I>, std::remove_pointer_t<I>, I>>{f};
+}
+
 #endif // INVOKER_CPLUSPLUS > 201103L
 
 #endif // INVOKER_HPP
