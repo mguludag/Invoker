@@ -102,7 +102,7 @@ private:
 #endif // INVOKER_CPLUSPLUS > 201402L
 
 template <typename I>
-Invoker<I> makeInvoker(I&& f) -> Invoker<std::conditional_t<std::is_pointer_v<I>, std::remove_pointer_t<I>, I>>
+auto makeInvoker(I&& f) -> Invoker<std::conditional_t<std::is_pointer_v<I>, std::remove_pointer_t<I>, I>>
 {
     return Invoker<std::conditional_t<std::is_pointer_v<I>, std::remove_pointer_t<I>, I>>{f};
 }
